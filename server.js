@@ -23,7 +23,7 @@ function find(thing, value) {
 
 	if (thing === 'id') {
 	for (let user_id in all) {
-		if (all[user_id].email === email) return user_id;
+		if (all[user_id].email === value) return user_id;
 	}
 	return null;
 
@@ -94,6 +94,7 @@ app.post('/register', (req, res) => {
 			const user_id = generateAlphanumericString();
 			database.users[user_id] = {email, password};
 			res.cookie('user_id', user_id);
+			console.log(database.users);
 			res.redirect('/urls');
 		}
 
@@ -155,14 +156,24 @@ app.get('/urls/:url_id', (req, res) => {
 
 app.post('/urls/:url_id/delete', (req, res) => {
 	const url_id = req.params.url_id;
-	delete database.urls[url_id];
-	res.redirect('/urls');
+	if (req.cookies.user_id !== database.urls[url_id].owner) {
+		res.status(401);
+		res.send("ACCESS DENIED. FBI NOTIFIED");
+	} else {
+		delete database.urls[url_id];
+		res.redirect('/urls');
+	}
 });
 
 app.post('/urls/:url_id', (req, res) => {
 	const url_id = req.params.url_id;
-	database.urls[url_id].long = req.body.new;
-	res.redirect('/urls');
+	if (req.cookies.user_id !== database.urls[url_id].owner) {
+		res.status(401);
+		res.send("ACCESS DENIED. FBI NOTIFIED");
+	} else {
+		database.urls[url_id].long = req.body.new;
+		res.redirect('/urls');
+	}
 });
 
 app.get('/u/:url_id', (req, res) => {

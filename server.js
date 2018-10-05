@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieMonster = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 const PORT = 8080;
 const app = express();
@@ -34,7 +35,7 @@ function find(thing, value) {
 
 function checkCredentials(user_id, email, password) {
 	const user = database.users[user_id];
-	if (user.email === email && user.password === password) {
+	if (user.email === email && bcrypt.compareSync(password, user.hashedPassword)) {
 		return true;
 	}
 	return false;
@@ -92,7 +93,8 @@ app.post('/register', (req, res) => {
 			res.send('email already exists.');
 		} else {
 			const user_id = generateAlphanumericString();
-			database.users[user_id] = {email, password};
+			const hashedPassword = bcrypt.hashSync(password, 10);
+			database.users[user_id] = {email, hashedPassword};
 			res.cookie('user_id', user_id);
 			console.log(database.users);
 			res.redirect('/urls');

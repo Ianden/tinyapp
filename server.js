@@ -147,8 +147,15 @@ app.get('/urls/:url_id', (req, res) => {
 	const all = database.urls;
 	let long;
 	if (all.hasOwnProperty(url_id)) {
-		long = all[url_id].long
-		res.render('url_show', {url_id, long})
+
+		if (req.cookies.user_id !== database.urls[url_id].owner) {
+			res.status(401);
+			res.send("ACCESS DENIED. FBI NOTIFIED")
+		} else {
+			long = all[url_id].long
+			res.render('url_show', {url_id, long})
+		}
+
 	} else {
 		res.status(404);
 		res.send('url does not exist.');

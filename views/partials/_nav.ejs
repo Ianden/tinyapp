@@ -1,0 +1,13 @@
+<header>
+	<% if (email) { %>
+		<p>tinyurl - logged in as <%= email %>. <a href="/logout">(logout)</a></p>
+	<% } else { %>
+		<p>tiny url - not logged in. <a href="/lgoin">(login)</a></p>
+	<% } %>
+</header>
+
+<nav>
+	<p>
+		<a href="/urls">all</a> | <a href="/urls/new">add</a></p>
+	</p>
+</nav>

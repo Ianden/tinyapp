@@ -7,10 +7,10 @@
 </head>
 <body>
 
+<% include partials/_nav %>
 <h1>all</h1>
-<p>signed in as <%= email %>. <a href="/logout"> logout</a></p>
 
-<table>
+<table style="border: 1px solid black">
 
 	<% if (Object.keys(urls).length === 0) { %>
 
@@ -42,8 +42,6 @@
 	<% } %>
 
 </table>
-
-<a href="/urls/new">new</a>
 
 </body>
 </html>

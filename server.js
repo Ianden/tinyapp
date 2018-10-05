@@ -1,17 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieMonster = require('cookie-parser');
+const cookieMonster = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 const PORT = 8080;
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieMonster());
+app.use(cookieMonster({
+	name: 'session',
+	keys: ['hgiehgiehiwheihge', 'eutiewginibebi']
+}));
 
 const database = {
 	urls: {
-		// url_id: { owner, url_id, long }
+		// url_id: { owner, time, visits: {}, url_id, long }
 	},
 
 	users: {
@@ -59,7 +62,7 @@ function validate(url) {
 }
 
 app.get('/', (req, res) => {
-	res.redirect(database.users[req.cookies.user_id] ? '/urls' : '/login');
+	res.redirect(database.users[req.session.user_id] ? '/urls' : '/login');
 });
 
 app.get('/login', (req, res) => {
@@ -71,7 +74,7 @@ app.post('/login', (req, res) => {
 	const user_id = find('id', email);
 
 	if (user_id && checkCredentials(user_id, email, password)) {
-		res.cookie('user_id', user_id);
+		req.session.user_id = user_id;
 		res.redirect('/urls');
 	} else {
 		res.status(403);
@@ -95,8 +98,7 @@ app.post('/register', (req, res) => {
 			const user_id = generateAlphanumericString();
 			const hashedPassword = bcrypt.hashSync(password, 10);
 			database.users[user_id] = {email, hashedPassword};
-			res.cookie('user_id', user_id);
-			console.log(database.users);
+			req.session.user_id = user_id;
 			res.redirect('/urls');
 		}
 
@@ -108,12 +110,12 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-	res.clearCookie('user_id');
+	req.session = null;
   res.redirect('/login');
 })
 
 app.get('/urls', (req, res) => {
-	const user_id = req.cookies.user_id;
+	const user_id = req.session.user_id;
 	if (user_id && find('exists', user_id)) {
 
 		res.render('urls', {
@@ -129,7 +131,7 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-	if (database.users[req.cookies.user_id]) {
+	if (database.users[req.session.user_id]) {
 		res.render('new');
 	} else {
 		res.redirect('/login');
@@ -137,10 +139,11 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.post('/urls/new', (req, res) => {
-	const owner = req.cookies.user_id;
+	const owner = req.session.user_id;
 	const long = validate(req.body.long);
 	const url_id = generateAlphanumericString();
-	database.urls[url_id] = {owner, url_id, long};
+	const time = + new Date();
+	database.urls[url_id] = {owner, time, visits: {}, url_id, long};
 	res.redirect('/urls');
 });
 
@@ -150,7 +153,7 @@ app.get('/urls/:url_id', (req, res) => {
 	let long;
 	if (all.hasOwnProperty(url_id)) {
 
-		if (req.cookies.user_id !== database.urls[url_id].owner) {
+		if (req.session.user_id !== database.urls[url_id].owner) {
 			res.status(401);
 			res.send("ACCESS DENIED. FBI NOTIFIED")
 		} else {
@@ -166,7 +169,7 @@ app.get('/urls/:url_id', (req, res) => {
 
 app.post('/urls/:url_id/delete', (req, res) => {
 	const url_id = req.params.url_id;
-	if (req.cookies.user_id !== database.urls[url_id].owner) {
+	if (req.session.user_id !== database.urls[url_id].owner) {
 		res.status(401);
 		res.send("ACCESS DENIED. FBI NOTIFIED");
 	} else {
@@ -177,7 +180,7 @@ app.post('/urls/:url_id/delete', (req, res) => {
 
 app.post('/urls/:url_id', (req, res) => {
 	const url_id = req.params.url_id;
-	if (req.cookies.user_id !== database.urls[url_id].owner) {
+	if (req.session.user_id !== database.urls[url_id].owner) {
 		res.status(401);
 		res.send("ACCESS DENIED. FBI NOTIFIED");
 	} else {

@@ -25,5 +25,5 @@ no
 ## screenshots
 
 ![home page](https://github.com/Ianden/tinyapp/blob/master/docs/main.png)
-![new url](tinyapp/docs/add.png)
-![edit](tinyapp/docs/edit.png)
+![new url](https://github.com/Ianden/tinyapp/blob/master/docs/add.png)
+![edit](https://github.com/Ianden/tinyapp/blob/master/docs/edit.png)

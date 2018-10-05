@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<title>all</title>
+
+</head>
+<body>
+
+<h1>all</h1>
+<p>signed in as <%= email %>. <a href="/logout"> logout</a></p>
+
+<table>
+
+	<% if (Object.keys(urls).length === 0) { %>
+
+		<p>No URL's to display</p>
+
+	<% } else { %>
+		<% for (let url in urls) { %>
+
+			<tr>
+				<td>
+					<%= urls[url].url_id %>
+				</td>
+				<td>
+					<%= urls[url].long %>
+				</td>
+				<td>
+					<a href="/urls/<%= urls[url].url_id %>">Edit</a>
+				</td>
+				<td>
+					<form action="/urls/<%= urls[url].url_id %>/delete" method="POST">
+						<button type="submit">delete</button>
+					</form>
+				</td>
+			</tr>
+
+		<% } %>
+	<% } %>
+
+</table>
+
+<a href="/urls/new">new</a>
+
+</body>
+</html>

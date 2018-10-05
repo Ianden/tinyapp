@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<title>more info</title>
+
+</head>
+<body>
+
+<p>short link: <%= url_id %></p>
+
+<p>long link: <%= long %></p>
+<form action="/urls/<%= url_id %>" method="POST">
+	<input type="text" name="new" placeholder="new name">
+	<button type="submit">change</button>
+</form>
+
+<form action="/urls/<%= url_id %>/delete" method="POST">
+	<button type="submit">delete</button>
+</form>
+
+<a href="/urls">back</a>
+
+</body>
+</html>

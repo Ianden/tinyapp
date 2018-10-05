@@ -115,8 +115,9 @@ app.get('/urls', (req, res) => {
 	if (user_id && find('exists', user_id)) {
 
 		res.render('urls', {
-			urls: database.urls, // database.urls.filter(u => u.owner === user_id)
-			email: database.users[user_id].email
+			urls: database.urls,
+			email: database.users[user_id].email,
+			user_id
 		});
 
 	} else {

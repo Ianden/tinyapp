@@ -18,6 +18,7 @@
 
 	<% } else { %>
 		<% for (let url in urls) { %>
+			<% if (urls[url].owner === user_id) { %>
 
 			<tr>
 				<td>
@@ -36,6 +37,7 @@
 				</td>
 			</tr>
 
+			<% } %>
 		<% } %>
 	<% } %>
 

@@ -22,3 +22,8 @@ tinyapp project for lightouse labs
 
 no
 
+## screenshots
+
+![home page](tinyapp/docs/main.png)
+![new url](tinyapp/docs/add.png)
+![edit](tinyapp/docs/edit.png)
